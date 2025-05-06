@@ -76,387 +76,162 @@ INSERT INTO DIVE_EVENT VALUES ('de_107', '25-07-17', '10', '105', 'C115', '554')
 INSERT INTO DIVE_EVENT VALUES ('de_108', '27-07-17', '5', '101', 'C122', '552');
 INSERT INTO DIVE_EVENT VALUES ('de_109', '28-07-17', '3', '102', 'C123', '553');
 
+-- Question 3: Create the "customer" table
+-- This table stores customer information including name and contact details
+CREATE TABLE customer (
+    CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Email VARCHAR(100),
+    PhoneNumber VARCHAR(20)
+);
 
+-- Question 4: Create the "product" table
+-- This table stores product details such as name, description, and price
+CREATE TABLE product (
+    ProductID INT AUTO_INCREMENT PRIMARY KEY,
+    ProductName VARCHAR(100),
+    Description TEXT,
+    Price DECIMAL(10,2)
+);
 
+-- Question 5: Create the "invoice" table
+-- This table records invoices, associating customers with transaction details
+CREATE TABLE invoice (
+    InvoiceID INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerID INT,
+    InvoiceDate DATE,
+    TotalAmount DECIMAL(10,2),
+    FOREIGN KEY (CustomerID) REFERENCES customer(CustomerID)
+);
 
+-- Question 6: Create the "invoice_line" table
+-- This table lists individual items on an invoice with product and quantity details
+CREATE TABLE invoice_line (
+    InvoiceLineID INT AUTO_INCREMENT PRIMARY KEY,
+    InvoiceID INT,
+    ProductID INT,
+    Quantity INT,
+    LineTotal DECIMAL(10,2),
+    FOREIGN KEY (InvoiceID) REFERENCES invoice(InvoiceID),
+    FOREIGN KEY (ProductID) REFERENCES product(ProductID)
+);
 
+-- Question 7: Insert at least five records into each table
+-- Insert sample customers
+INSERT INTO customer (FirstName, LastName, Email, PhoneNumber) VALUES
+('Alice', 'Smith', 'alice@example.com', '0123456789'),
+('Bob', 'Johnson', 'bob@example.com', '0234567891'),
+('Charlie', 'Williams', 'charlie@example.com', '0345678912'),
+('Diana', 'Brown', 'diana@example.com', '0456789123'),
+('Evan', 'Jones', 'evan@example.com', '0567891234');
 
---Question 3 --
-SELECT
-    i.INS_FNAME || ' ' || i.INS_SNAME AS INSTRUCTOR_FULL_NAME,
-    c.CUST_FNAME || ' ' || c.CUST_SNAME AS CUSTOMER_FULL_NAME,
-    d.DIVE_LOCATION,
-    de.DIVE_PARTICIPANTS
-FROM
-    DIVE_EVENT de
-JOIN
-    INSTRUCTOR i ON de.INS_ID = i.INS_ID
-JOIN
-    CUSTOMER c ON de.CUST_ID = c.CUST_ID
-JOIN
-    DIVE d ON de.DIVE_ID = d.DIVE_ID
-WHERE
-    TO_NUMBER(de.DIVE_PARTICIPANTS) BETWEEN 8 AND 10;
-    
---Question 4 --
-Select 
-    d.DIVE_NAME,
-    de.DIVE_DATE
-FROM
-    DIVE_EVENT de
-JOIN
-    DIVE d ON de.DIVE_ID = d.DIVE_ID
-WHERE
-    TO_NUMBER(de.DRIVE_PARTICIPANTS) >=10;
-    
--- Question 5--
-SET SERVEROUTPUT ON;
+-- Insert sample products
+INSERT INTO product (ProductName, Description, Price) VALUES
+('Mask', 'Diving mask with anti-fog lens', 350.00),
+('Snorkel', 'Dry-top snorkel for easy breathing', 150.00),
+('Fins', 'Full-foot diving fins for speed', 500.00),
+('Wetsuit', 'Thermal wetsuit for cold waters', 1200.00),
+('Tank', 'Compressed air diving tank', 2500.00);
 
-DECLARE
-    -- Cursor to select the required data
-    CURSOR dive_cursor IS
-        SELECT
-            c.CUST_FNAME || ' ' || c.CUST_SNAME AS CUSTOMER_FULL_NAME,
-            d.DIVE_NAME,
-            de.DIVE_PARTICIPANTS,
-            d.DIVE_COST
-        FROM
-            DIVE_EVENT de
-        JOIN
-            CUSTOMER c ON de.CUST_ID = c.CUST_ID
-        JOIN
-            DIVE d ON de.DIVE_ID = d.DIVE_ID
-        WHERE
-            d.DIVE_COST > 500;
+-- Insert sample invoices
+INSERT INTO invoice (CustomerID, InvoiceDate, TotalAmount) VALUES
+(1, '2024-04-01', 1000.00),
+(2, '2024-04-15', 1750.00),
+(3, '2024-05-05', 2500.00),
+(4, '2024-05-20', 3000.00),
+(5, '2024-06-01', 450.00);
 
-    -- Variables to hold cursor data
-    v_customer_full_name VARCHAR2(100);
-    v_dive_name VARCHAR2(30);
-    v_dive_participants VARCHAR2(20);
-    v_dive_cost DECIMAL(10, 2);
-    v_instructors_count NUMBER;
+-- Insert sample invoice lines
+INSERT INTO invoice_line (InvoiceID, ProductID, Quantity, LineTotal) VALUES
+(1, 1, 2, 700.00),
+(1, 2, 1, 300.00),
+(2, 3, 2, 1000.00),
+(2, 4, 1, 750.00),
+(3, 5, 1, 2500.00);
 
-BEGIN
-    -- Open the cursor
-    OPEN dive_cursor;
-
-    -- Loop through each row fetched by the cursor
-    LOOP
-        FETCH dive_cursor INTO v_customer_full_name, v_dive_name, v_dive_participants, v_dive_cost;
-       
-        -- Exit the loop if no more rows are found
-        EXIT WHEN dive_cursor%NOTFOUND;
-       
-        -- Determine the number of instructors based on the number of participants
-        IF TO_NUMBER(v_dive_participants) <= 4 THEN
-            v_instructors_count := 1;
-        ELSIF TO_NUMBER(v_dive_participants) BETWEEN 5 AND 7 THEN
-            v_instructors_count := 2;
-        ELSE
-            v_instructors_count := 3;
-        END IF;
-       
-        -- Output the results
-        DBMS_OUTPUT.PUT_LINE('Customer: ' || v_customer_full_name || ', Dive Name: ' || v_dive_name || ', Participants: ' || v_dive_participants || ', Status: ' || v_instructors_count);
-    END LOOP;
-   
-    -- Close the cursor
-    CLOSE dive_cursor;
-END;
-/
-
---Question 6--
-CREATE VIEW Vw_Dive_Event AS
-SELECT
-    de.INS_ID,
-    de.CUST_ID,
-    c.CUST_ADDRESS,
-    d.DIVE_DURATION
-FROM
-    DIVE_EVENT de
-JOIN
-    CUSTOMER c ON de.CUST_ID = c.CUST_ID
-JOIN
-    DIVE d ON de.DIVE_ID = d.DIVE_ID
-WHERE
-    de.DIVE_DATE < TO_DATE('19-07-2017', 'DD-MM-YYYY');
-    
---Question 7--
-//Create Trigger
-CREATE OR REPLACE TRIGGER New_Dive_Event
-BEFORE INSERT OR UPDATE ON DIVE_EVENT
-FOR EACH ROW
-BEGIN
-    IF :NEW.DIVE_PARTICIPANTS <= 0 OR :NEW.DIVE_PARTICIPANTS > 20 THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Invalid number of participants. The number must be between 1 and 20.');
-    END IF;
-END;
-/
-
-//Test 1 with 0 participants
-BEGIN
-    INSERT INTO DIVE_EVENT (DIVE_EVENT_ID, DIVE_DATE, DIVE_PARTICIPANTS, INS_ID, CUST_ID, DIVE_ID) VALUES ('test_001', TO_DATE('01-07-17', 'DD-MM-YY'),
-    0,'101', 'C115', '550');
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE(SQLERRM);
-END;
-/
-
-//Test 2 with 22 participants
-BEGIN
-    INSERT INTO DIVE_EVENT (DIVE_EVENT_ID, DIVE_DATE, DIVE_PARTICIPANTS, INS_ID, CUST_ID, DIVE_ID) VALUES ('test_001', TO_DATE('01-07-17', 'DD-MM-YY'),
-    22,'101', 'C115', '550');
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE(SQLERRM);
-END;
-/
-//Test 3 with valid number of participants like 6
-BEGIN
-    INSERT INTO DIVE_EVENT (DIVE_EVENT_ID, DIVE_DATE, DIVE_PARTICIPANTS, INS_ID, CUST_ID, DIVE_ID) VALUES ('test_001', TO_DATE('01-07-17', 'DD-MM-YY'),
-    6,'101', 'C115', '550');
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE(SQLERRM);
-END;
-/
-
-
-SET SERVEROUTPUT ON;
-
---Question 8--
-//Create stored Procedure
-CREATE OR REPLACE PROCEDURE sp_Customer_Details (
-    p_Cust_ID IN VARCHAR2,
-    p_Dive_Date IN DATE
+-- Question 8: Create a stored procedure to update a customer's email
+-- This procedure updates the email address of a customer based on their ID
+DELIMITER //
+CREATE PROCEDURE UpdateCustomerEmail(
+    IN p_CustomerID INT,
+    IN p_NewEmail VARCHAR(100)
 )
-IS
-    v_Cust_Full_Name VARCHAR2(100);
-    v_Dive_Name VARCHAR2(50);
 BEGIN
-    SELECT c.CUST_FNAME || ' ' || c.CUST_SNAME, d.DIVE_NAME
-    INTO v_Cust_Full_Name, v_Dive_Name
-    FROM DIVE_EVENT de
-    JOIN CUSTOMER c ON de.CUST_ID = c.CUST_ID
-    JOIN DIVE d ON de.DIVE_ID = d.DIVE_ID
-    WHERE de.CUST_ID = p_Cust_ID AND de.DIVE_DATE = p_Dive_Date;
+    UPDATE customer
+    SET Email = p_NewEmail
+    WHERE CustomerID = p_CustomerID;
+END //
+DELIMITER ;
 
-    DBMS_OUTPUT.PUT_LINE('CUSTOMER DETAILS: ' || v_Cust_Full_Name || ' booked for the ' || v_Dive_Name || ' on ' || TO_CHAR(p_Dive_Date, 'DD-Mon-YY') || '.');
-
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('No booking found for the provided customer ID and dive date.');
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('An unexpected error occurred: ' || SQLERRM);
-END;
-/
-
-//Execute the procedure with an exception handling
+-- Question 9: Create a function to calculate total revenue for a given month
+-- This function takes a month as input and returns the total revenue for that month
+DELIMITER //
+CREATE FUNCTION CalculateTotalRevenueForMonth(input_month VARCHAR(7))
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
 BEGIN
-    sp_Customer_Details('C115', TO_DATE('15-07-17', 'DD-MM-YY'));
-END;
+    DECLARE total_revenue DECIMAL(10,2);
 
-//Invalid customer ID
-BEGIN
-    sp_Customer_Details('C759', TO_DATE('15-07-17', 'DD-MM-YY'));
-END;
+    -- Calculate the sum of total amounts for invoices matching the input month (YYYY-MM)
+    SELECT SUM(TotalAmount) INTO total_revenue
+    FROM invoice
+    WHERE DATE_FORMAT(InvoiceDate, '%Y-%m') = input_month;
 
---Question 9--
-//Create a function
+    RETURN total_revenue;
+END //
+DELIMITER ;
 
-CREATE OR REPLACE FUNCTION calculate_dive_revenue (
-    p_Dive_Event_ID IN VARCHAR2
-) RETURN NUMBER
-IS
-    -- Variables to store data retrieved from the database
-    v_Participants NUMBER;
-    v_Dive_Cost NUMBER;
-    v_Total_Revenue NUMBER;
-BEGIN
-    -- Retrieve the number of participants and dive cost for the given dive event ID
-    SELECT TO_NUMBER(de.DIVE_PARTICIPANTS), d.DIVE_COST
-    INTO v_Participants, v_Dive_Cost
-    FROM DIVE_EVENT de
-    JOIN DIVE d ON de.DIVE_ID = d.DIVE_ID
-    WHERE de.DIVE_EVENT_ID = p_Dive_Event_ID;
-   
-    -- Calculate total revenue
-    v_Total_Revenue := v_Participants * v_Dive_Cost;
-   
-    -- Return the calculated total revenue
-    RETURN v_Total_Revenue;
+-- Question 10: Java class that connects to the MySQL database and calls the CalculateTotalRevenueForMonth function
+-- This class establishes a database connection, invokes the stored function, and prints the result
 
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        -- Handle case where the dive event ID is not found
-        DBMS_OUTPUT.PUT_LINE('No data found for the provided dive event ID.');
-        RETURN -1;
-    WHEN OTHERS THEN
-        -- Handle any other unexpected errors
-        DBMS_OUTPUT.PUT_LINE('An unexpected error occurred: ' || SQLERRM);
-        RETURN -1;
-END;
-/
-
-//Execute function
-SET SERVEROUTPUT ON;
-
-DECLARE
-    v_Revenue NUMBER;
-BEGIN
-    -- Call the function with a valid dive event ID
-    v_Revenue := calculate_dive_revenue('de_103');
-    -- Display the result
-    DBMS_OUTPUT.PUT_LINE('Total Revenue for Dive Event ID de_103: R ' || v_Revenue);
-END;
-/
-
---Quetion 10--
-//Create GUI for reports
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.Scanner;
 
-public class GearDealerGUI extends JFrame {
+public class CalculateRevenueForMonth {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-    private JTextField customerIdField;
-    private JTextField diveDateField;
-    private JTextArea outputArea;
+        // Prompt user to enter a month in YYYY-MM format
+        System.out.print("Enter month (YYYY-MM): ");
+        String inputMonth = scanner.nextLine();
 
-    public GearDealerGUI() {
-        super("IT Gear Dealer Reports");
+        // Database connection parameters
+        String url = "jdbc:mysql://localhost:3306/ecommerce";
+        String username = "root";
+        String password = "password";
 
-        // Initialize components
-        customerIdField = new JTextField(10);
-        diveDateField = new JTextField(10);
-        outputArea = new JTextArea(10, 30);
-        outputArea.setEditable(false);
+        try {
+            // Load JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-        JButton searchButton = new JButton("Search");
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Call stored procedure sp_customer_details
-                String customerId = customerIdField.getText().trim();
-                String diveDateStr = diveDateField.getText().trim();
+            // Establish database connection
+            Connection conn = DriverManager.getConnection(url, username, password);
 
-                // Perform database query and update outputArea
-                String result = executeSP_CustomerDetails(customerId, diveDateStr);
-                outputArea.setText(result);
-            }
-        });
+            // Prepare a callable statement to invoke the function
+            CallableStatement stmt = conn.prepareCall("{ ? = call CalculateTotalRevenueForMonth(?) }");
 
-        JButton calculateRevenueButton = new JButton("Calculate Revenue");
-        calculateRevenueButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Call function fn_Dive_Adjustments
-                String result = executeFN_Dive_Adjustments();
-                outputArea.setText(result);
-            }
-        });
+            // Register output parameter and set input parameter
+            stmt.registerOutParameter(1, Types.DECIMAL);
+            stmt.setString(2, inputMonth);
 
-        // Layout components using BorderLayout
-        JPanel inputPanel = new JPanel(new FlowLayout());
-        inputPanel.add(new JLabel("Customer ID: "));
-        inputPanel.add(customerIdField);
-        inputPanel.add(new JLabel("Dive Date: "));
-        inputPanel.add(diveDateField);
-        inputPanel.add(searchButton);
-
-        JPanel outputPanel = new JPanel(new BorderLayout());
-        outputPanel.add(new JLabel("Output Area:"), BorderLayout.NORTH);
-        outputPanel.add(new JScrollPane(outputArea), BorderLayout.CENTER);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(calculateRevenueButton);
-
-        // Main frame layout
-        setLayout(new BorderLayout());
-        add(inputPanel, BorderLayout.NORTH);
-        add(outputPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        // JFrame settings
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
-        setLocationRelativeTo(null); // Center the frame
-        setVisible(true);
-    }
-
-    // Method to execute stored procedure sp_customer_details
-    private String executeSP_CustomerDetails(String customerId, String diveDateStr) {
-        String result = "";
-
-        try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "username", "password");
-             CallableStatement stmt = conn.prepareCall("{call sp_customer_details(?, ?)}")) {
-
-            // Set input parameters
-            stmt.setString(1, customerId);
-            stmt.setDate(2, new java.sql.Date(new java.util.Date(diveDateStr).getTime()));
-
-            // Execute query
-            ResultSet rs = stmt.executeQuery();
-
-            // Process result set
-            if (rs.next()) {
-                String customerDetails = rs.getString(1); // Adjust based on your stored procedure result
-                result = "CUSTOMER DETAILS: " + customerDetails;
-            } else {
-                result = "No customer details found.";
-            }
-
-        } catch (SQLException | ParseException e) {
-            result = "Error: " + e.getMessage();
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
-    // Method to execute function fn_Dive_Adjustments
-    private String executeFN_Dive_Adjustments() {
-        String result = "";
-
-        try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "username", "password");
-             CallableStatement stmt = conn.prepareCall("{? = call fn_Dive_Adjustments()}")) {
-
-            // Register the output parameter
-            stmt.registerOutParameter(1, Types.NUMERIC);
-
-            // Execute function
+            // Execute the function
             stmt.execute();
 
-            // Retrieve the output value
+            // Retrieve and display the result
             double revenue = stmt.getDouble(1);
-            result = "Total Revenue: R " + revenue;
+            System.out.println("Total revenue for " + inputMonth + ": R" + revenue);
 
-        } catch (SQLException e) {
-            result = "Error: " + e.getMessage();
+            // Close resources
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            // Handle exceptions and print error details
+            System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            scanner.close();
         }
-
-        return result;
-    }
-
-    public static void main(String[] args) {
-        // Run GUI in the Event Dispatch Thread (EDT)
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GearDealerGUI();
-            }
-        });
     }
 }
- 
-
-
-
-
-
-
-
