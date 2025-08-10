@@ -1,63 +1,75 @@
-Dive Event Schema & Revenue Calculator (SQL + Java)
+# Dive Event Schema & Revenue Calculator (SQL + Java)
 
-📘 Overview
+<p>📘 <strong>Overview</strong></p>
 
-This project demonstrates core backend skills through the creation of a mini e-commerce database schema and a Java program that interacts with it. It's designed as part of a skillset assessment, showcasing the ability to build normalized relational databases, write stored logic, and connect that logic through a Java application.
+<p>This project demonstrates backend skills through the creation of a mini e-commerce database schema and a Java program that interacts with it. It's designed as part of a skillset assessment, showcasing the ability to build normalized relational databases, write stored logic, and connect that logic through a Java application.</p>
 
-🧱 SQL Structure
+<hr>
 
-Tables Created:
+<h2>🧱 SQL Structure</h2>
 
-customer: Stores customer details.
+<p><strong>Tables Created:</strong></p>
+<ul>
+  <li><code>customer</code>: Stores customer details.</li>
+  <li><code>product</code>: Stores product catalog.</li>
+  <li><code>invoice</code>: Links customer purchases with transaction totals.</li>
+  <li><code>invoice_line</code>: Breaks down individual invoice items.</li>
+</ul>
 
-product: Stores product catalog.
+<p><strong>Additional SQL Features:</strong></p>
+<ul>
+  <li>Sample Data: Inserted for demonstration.</li>
+  <li>Stored Procedure: <code>UpdateCustomerEmail</code> updates email based on ID.</li>
+  <li>Stored Function: <code>CalculateTotalRevenueForMonth</code> calculates revenue for a given month.</li>
+</ul>
 
-invoice: Links customer purchases with transaction totals.
+<hr>
 
-invoice_line: Breaks down individual invoice items.
+<h2>☕ Java Integration</h2>
 
-Additional SQL Features:
+<p>Java class <code>CalculateRevenueForMonth</code> connects to MySQL via JDBC.</p>
+<ul>
+  <li>Uses <code>CallableStatement</code> to invoke the SQL function.</li>
+  <li>Handles user input for dynamic data retrieval.</li>
+</ul>
 
-Sample Data: Inserted for demonstration.
+<hr>
 
-Stored Procedure: UpdateCustomerEmail updates email based on ID.
+<h2>🧠 Skills Demonstrated</h2>
 
-Stored Function: CalculateTotalRevenueForMonth calculates revenue for a given month.
+<ul>
+  <li>SQL schema design, constraints, stored routines.</li>
+  <li>JDBC in Java, callable statements, user interaction.</li>
+</ul>
 
-☕ Java Integration
+<hr>
 
-Java class CalculateRevenueForMonth connects to MySQL via JDBC.
+<h2>📌 Reflections</h2>
 
-Uses CallableStatement to invoke the SQL function.
+<p>This project improved my confidence in backend logic and highlighted areas to strengthen like data validation, security, and UI design. It confirms my ability to bridge SQL and Java effectively, while setting clear next steps for growth.</p>
 
-Handles user input for dynamic data retrieval.
+<hr>
 
-🧠 Skills Demonstrated
+<h2>📂 How to Run</h2>
 
-SQL schema design, constraints, stored routines.
+<ol>
+  <li>Execute the SQL script in MySQL to set up schema.</li>
+  <li>Compile and run the Java class.</li>
+  <li>Input any <code>YYYY-MM</code> month format to fetch revenue results from stored data.</li>
+</ol>
 
-JDBC in Java, callable statements, user interaction.
+<hr>
 
-📌 Reflections
+<h2>🔧 Requirements</h2>
 
-This project improved my confidence in backend logic and highlighted areas to strengthen like data validation, security, and UI design. It confirms my ability to bridge SQL and Java effectively, while setting clear next steps for growth.
+<ul>
+  <li>MySQL 8+</li>
+  <li>Java JDK 11+</li>
+  <li>JDBC driver (MySQL Connector/J)</li>
+</ul>
 
-📂 How to Run
+<hr>
 
-Execute the SQL script in MySQL to set up schema.
+<h2>📥 Author</h2>
 
-Compile and run the Java class.
-
-Input any YYYY-MM month format to fetch revenue results from stored data.
-
-🔧 Requirements
-
-MySQL 8+
-
-Java JDK 11+
-
-JDBC driver (MySQL Connector/J)
-
-📥 Author
-
-Siya Nhlapo – Software Development Student, Passionate about backend logic and systems integration.
+<p><strong>Siyabonga Nhlapo</strong> – Software Development Student, demonstrated backend logic and systems integration.</p>
