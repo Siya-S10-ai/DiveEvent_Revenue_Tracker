@@ -118,7 +118,7 @@ CREATE TABLE invoice_line (
 );
 
 -- Question 7: Insert at least five records into each table
--- Insert sample customers
+-- Insert sample data into customers
 INSERT INTO customer (FirstName, LastName, Email, PhoneNumber) VALUES
 ('Alice', 'Smith', 'alice@example.com', '0123456789'),
 ('Bob', 'Johnson', 'bob@example.com', '0234567891'),
@@ -126,7 +126,7 @@ INSERT INTO customer (FirstName, LastName, Email, PhoneNumber) VALUES
 ('Diana', 'Brown', 'diana@example.com', '0456789123'),
 ('Evan', 'Jones', 'evan@example.com', '0567891234');
 
--- Insert sample products
+-- Insert sample data into products
 INSERT INTO product (ProductName, Description, Price) VALUES
 ('Mask', 'Diving mask with anti-fog lens', 350.00),
 ('Snorkel', 'Dry-top snorkel for easy breathing', 150.00),
@@ -134,7 +134,7 @@ INSERT INTO product (ProductName, Description, Price) VALUES
 ('Wetsuit', 'Thermal wetsuit for cold waters', 1200.00),
 ('Tank', 'Compressed air diving tank', 2500.00);
 
--- Insert sample invoices
+-- Insert sample data into invoices
 INSERT INTO invoice (CustomerID, InvoiceDate, TotalAmount) VALUES
 (1, '2024-04-01', 1000.00),
 (2, '2024-04-15', 1750.00),
@@ -142,7 +142,7 @@ INSERT INTO invoice (CustomerID, InvoiceDate, TotalAmount) VALUES
 (4, '2024-05-20', 3000.00),
 (5, '2024-06-01', 450.00);
 
--- Insert sample invoice lines
+-- Insert sample data into invoice_lines
 INSERT INTO invoice_line (InvoiceID, ProductID, Quantity, LineTotal) VALUES
 (1, 1, 2, 700.00),
 (1, 2, 1, 300.00),
