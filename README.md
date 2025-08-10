@@ -73,3 +73,7 @@
 <h2>📥 Author</h2>
 
 <p><strong>Siyabonga Nhlapo</strong> – Software Development Student, demonstrated backend logic and systems integration.</p>
+# Programming Languages Used:
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+![SQL](https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=postgresql&logoColor=white)
